@@ -75,7 +75,7 @@ class TestDriver implements GlobalConst {
    */
   protected void create_minibase() {
     System.out.println("Creating database...\nReplacer: " + BUF_POLICY);
-    new Minibase(DB_PATH, DB_SIZE, BUF_SIZE, BUF_POLICY, false);
+    new Minibase(DB_PATH, DB_SIZE, BUF_SIZE,0, BUF_POLICY, false);
   }
 
   /**
@@ -83,7 +83,7 @@ class TestDriver implements GlobalConst {
    */
   protected void load_minibase() {
     System.out.println("Loading database...\nReplacer: " + BUF_POLICY);
-    new Minibase(DB_PATH, DB_SIZE, BUF_SIZE, BUF_POLICY, true);
+    new Minibase(DB_PATH, DB_SIZE, BUF_SIZE,0, BUF_POLICY, true);
   }
 
   // --------------------------------------------------------------------------

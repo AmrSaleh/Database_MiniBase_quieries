@@ -12,7 +12,7 @@ public class SimpleJoin extends Iterator {
 	Predicate[] currentPredicate;
 	Tuple currentTuple;
 	Tuple leftTuple;
-	static boolean leftEnded;
+	boolean leftEnded;
 
 	/**
 	 * Constructs a join, given the left and right iterators and join predicates
@@ -44,6 +44,7 @@ public class SimpleJoin extends Iterator {
 // 		throw new UnsupportedOperationException("Not implemented");
         currentLeft.restart();
         currentRight.restart();
+        leftEnded = true;
 	}
 
 	/**
@@ -61,6 +62,7 @@ public class SimpleJoin extends Iterator {
 // 		throw new UnsupportedOperationException("Not implemented");
         currentLeft.close();
         currentRight.close();
+        leftEnded = true;
 	}
 
 	/**
@@ -68,7 +70,7 @@ public class SimpleJoin extends Iterator {
 	 */
 	public boolean hasNext() {
 // 		throw new UnsupportedOperationException("Not implemented");
-        while(!leftEnded){
+        if(!leftEnded){
             while(currentRight.hasNext()){
                 Tuple rightTuple = currentRight.getNext();    
                 Tuple joined = Tuple.join(leftTuple, rightTuple, getSchema());
@@ -85,17 +87,15 @@ public class SimpleJoin extends Iterator {
     				return true;
     			}
             }
-            currentRight.restart();
             leftEnded = true;
         }
-        if(currentLeft.hasNext()) {
+        if(leftEnded && currentLeft.hasNext()) {
             leftEnded = false;
             leftTuple = currentLeft.getNext();
             currentRight.restart();
             return (this.hasNext());
-        } 
+        }
         return false;
-        // currentLeft.restart();
 	}
 
 	/**

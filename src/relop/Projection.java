@@ -7,26 +7,25 @@ import java.nio.channels.IllegalSelectorException;
  * relational algebra, this operator does NOT eliminate duplicate tuples.
  */
 public class Projection extends Iterator {
-
+	
 	Iterator currentIterator;
-	Integer[] projectionFields;
+	Integer[] currentField;
 	Tuple currentTuple;
-	Schema newSchema;
+	Schema currentSchema;
+
 	/**
 	 * Constructs a projection, given the underlying iterator and field numbers.
 	 */
 	public Projection(Iterator iter, Integer... fields) {
-		// throw new UnsupportedOperationException("Not implemented");
+//		throw new UnsupportedOperationException("Not implemented");
 		currentIterator = iter;
-		projectionFields = fields;
+		currentField = fields;
 		currentTuple = null;
-
-		newSchema = new Schema(projectionFields.length);
-		for (int i = 0; i < projectionFields.length; i++) {
-			newSchema.initField(i, currentIterator.getSchema(), projectionFields[i]);
+		currentSchema = new Schema(currentField.length);
+		setSchema(currentSchema);
+		for(int i = 0; i < currentField.length; i++){
+			currentSchema.initField(i, iter.getSchema(), currentField[i]);
 		}
-		setSchema(newSchema);
-
 	}
 
 	/**
@@ -41,7 +40,7 @@ public class Projection extends Iterator {
 	 * Restarts the iterator, i.e. as if it were just constructed.
 	 */
 	public void restart() {
-		// throw new UnsupportedOperationException("Not implemented");
+//		throw new UnsupportedOperationException("Not implemented");
 		currentIterator.restart();
 	}
 
@@ -49,7 +48,7 @@ public class Projection extends Iterator {
 	 * Returns true if the iterator is open; false otherwise.
 	 */
 	public boolean isOpen() {
-		// throw new UnsupportedOperationException("Not implemented");
+//		throw new UnsupportedOperationException("Not implemented");
 		return currentIterator.isOpen();
 	}
 
@@ -57,7 +56,7 @@ public class Projection extends Iterator {
 	 * Closes the iterator, releasing any resources (i.e. pinned pages).
 	 */
 	public void close() {
-		// throw new UnsupportedOperationException("Not implemented");
+//		throw new UnsupportedOperationException("Not implemented");
 		currentIterator.close();
 	}
 
@@ -65,10 +64,16 @@ public class Projection extends Iterator {
 	 * Returns true if there are more tuples, false otherwise.
 	 */
 	public boolean hasNext() {
-		// throw new UnsupportedOperationException("Not implemented");
-		if (currentIterator.hasNext()) {
+//		throw new UnsupportedOperationException("Not implemented");
+		if(currentIterator.hasNext()){
+			currentTuple = currentIterator.getNext();
+			Tuple t = new Tuple(currentSchema);
+		    for(int i = 0; i < currentField.length; i++){
+		        t.setField(i, currentTuple.getField(currentField[i]));
+		    }
+			currentTuple = t;
 			return true;
-		} else
+		}else
 			return false;
 	}
 
@@ -79,30 +84,11 @@ public class Projection extends Iterator {
 	 *             if no more tuples
 	 */
 	public Tuple getNext() {
-		// throw new UnsupportedOperationException("Not implemented");
-
-		if (hasNext() == false) {
+//		throw new UnsupportedOperationException("Not implemented");
+		if (currentTuple == null) {
 			throw new IllegalSelectorException();
 		}
-
-		currentTuple = currentIterator.getNext();
-// 		Schema s = new Schema(projectionFields.length);
-		Object[] dataFields = new Object[projectionFields.length];
-
-		for (int i = 0; i < projectionFields.length; i++) {
-// 			s.initField(i, currentTuple.schema, projectionFields[i]);
-			dataFields[i] = currentTuple.getField(projectionFields[i]);
-		}
-
-		// ==> schema [phone(0)]
-		// ==> data [555(0) , 555(1) , elHaram (2)]
-
-		// Tuple newTuple(s);
-		Tuple newTuple = new Tuple(newSchema, dataFields);
-
-		// for(int i = 0; i < projectionFields.length; i++)
-		// newTuple.setField(i, currentTuple.getField(projectionFields[i]));
-
-		return newTuple;
+		return currentTuple;
 	}
+
 } // public class Projection extends Iterator

@@ -96,6 +96,5 @@ public class FileScan extends Iterator {
 		last_rid.copyRID(rid);
 		return last_rid;
 	}
-	
 
 } // public class FileScan extends Iterator

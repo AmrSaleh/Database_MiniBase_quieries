@@ -71,6 +71,7 @@ public class Selection extends Iterator {
 
 		while (currentIterator.hasNext()) {
 			currentTuple = currentIterator.getNext();
+//			currentTuple.print();
 			if (currentPredicate == null) {
 				return true;
 			}
